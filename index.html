@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2a2032" />
+  <meta name="description" content="LineForge Studio is an offline-friendly drawing practice PWA with creative missions, step-by-step coaching, critique checklists, and a Pencil-friendly canvas." />
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LineForge" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+
+  <title>LineForge Studio</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <div id="app" class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <rect x="8" y="8" width="48" height="48" rx="15"></rect>
+            <path d="M19 43c7-19 17-25 26-22-3 5-7 10-12 15l10-1c-5 6-12 9-24 8z"></path>
+            <circle cx="42" cy="18" r="3"></circle>
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">Pencil-friendly drawing teacher</p>
+          <h1>LineForge Studio</h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="installButton" class="ghost-button" hidden>Install</button>
+        <button class="ghost-button" data-action="new-mission">New Mission</button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Main sections">
+      <button class="tab is-active" data-tab="mission">
+        <span>01</span>
+        Mission
+      </button>
+      <button class="tab" data-tab="studio">
+        <span>02</span>
+        Studio
+      </button>
+      <button class="tab" data-tab="library">
+        <span>03</span>
+        Library
+      </button>
+      <button class="tab" data-tab="learn">
+        <span>04</span>
+        Learn
+      </button>
+    </nav>
+
+    <main id="main" class="main-grid">
+      <section class="panel mission-panel" data-panel="mission">
+        <div class="panel-title-row">
+          <div>
+            <p class="eyebrow">Today’s brief</p>
+            <h2>Generate a teachable drawing challenge.</h2>
+          </div>
+          <div class="pill" id="missionSeed">Seed: warmup</div>
+        </div>
+
+        <div id="missionCards" class="mission-cards" aria-live="polite"></div>
+
+        <div class="action-bar">
+          <button class="primary-button" data-action="new-mission">Forge another</button>
+          <button class="ghost-button" data-action="save-mission">Save mission</button>
+          <button class="ghost-button" data-action="speak-lesson">Read lesson</button>
+          <button class="ghost-button" data-action="share-mission">Share</button>
+        </div>
+      </section>
+
+      <section class="panel coach-panel" data-panel="mission">
+        <p class="eyebrow">Coach path</p>
+        <h2>How to draw it</h2>
+        <ol id="lessonSteps" class="lesson-steps"></ol>
+
+        <div class="critique-card">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">After drawing</p>
+              <h3>Critique checklist</h3>
+            </div>
+            <button class="mini-button" data-action="reset-checklist">Reset</button>
+          </div>
+          <div id="checklist" class="checklist"></div>
+        </div>
+      </section>
+
+      <section class="panel studio-panel" data-panel="studio" hidden>
+        <div class="panel-title-row">
+          <div>
+            <p class="eyebrow">Practice desk</p>
+            <h2>Sketch with finger, Pencil, or trackpad.</h2>
+          </div>
+          <div class="pill" id="canvasStatus">Ready</div>
+        </div>
+
+        <div class="studio-layout">
+          <div class="canvas-wrap">
+            <canvas id="drawingCanvas" class="drawing-surface" aria-label="Drawing canvas"></canvas>
+            <svg id="guideOverlay" class="guide-overlay" viewBox="0 0 100 100" aria-hidden="true"></svg>
+          </div>
+
+          <aside class="toolbox" aria-label="Drawing tools">
+            <label>
+              Brush
+              <input id="brushSize" type="range" min="2" max="30" value="8" />
+            </label>
+            <label>
+              Ink
+              <select id="brushColor">
+                <option value="#f7ecde">Cream</option>
+                <option value="#c9965d">Gold</option>
+                <option value="#b69acb">Lavender</option>
+                <option value="#302635">Plum</option>
+              </select>
+            </label>
+            <div class="tool-grid">
+              <button class="ghost-button" data-action="undo">Undo</button>
+              <button class="ghost-button" data-action="toggle-grid">Grid</button>
+              <button class="ghost-button" data-action="toggle-guide">Guide</button>
+              <button class="ghost-button" data-action="clear-canvas">Clear</button>
+              <button class="primary-button wide" data-action="export-png">Export PNG</button>
+            </div>
+            <p class="help-note">Tip: turn on Guide, rough the big shapes first, then hide it and redraw cleaner.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="panel library-panel" data-panel="library" hidden>
+        <div class="panel-title-row">
+          <div>
+            <p class="eyebrow">Practice archive</p>
+            <h2>Your saved missions</h2>
+          </div>
+          <button class="ghost-button" data-action="export-library">Export JSON</button>
+        </div>
+        <div id="libraryList" class="library-list"></div>
+      </section>
+
+      <section class="panel learn-panel" data-panel="learn" hidden>
+        <p class="eyebrow">Mini lessons</p>
+        <h2>Shape language cheatsheet</h2>
+        <div class="lesson-grid">
+          <article class="lesson-card">
+            <span class="shape-dot circle"></span>
+            <h3>Circles</h3>
+            <p>Use circles and curves for friendly, soft, cute, safe, squishy, or hopeful drawings.</p>
+          </article>
+          <article class="lesson-card">
+            <span class="shape-dot square"></span>
+            <h3>Squares</h3>
+            <p>Use squares and rectangles for stable, heavy, reliable, awkward, practical, or grounded drawings.</p>
+          </article>
+          <article class="lesson-card">
+            <span class="shape-dot triangle"></span>
+            <h3>Triangles</h3>
+            <p>Use triangles and sharp diagonals for danger, energy, drama, speed, confusion, or tension.</p>
+          </article>
+          <article class="lesson-card">
+            <span class="shape-dot line"></span>
+            <h3>Silhouette</h3>
+            <p>Squint at your drawing. If the outer shape reads clearly, the design is already stronger.</p>
+          </article>
+          <article class="lesson-card">
+            <span class="shape-dot stamp"></span>
+            <h3>Logo mode</h3>
+            <p>Remove details until the idea works as a tiny mark. Keep one bold shape and one memorable twist.</p>
+          </article>
+          <article class="lesson-card">
+            <span class="shape-dot sparkle"></span>
+            <h3>Second pass</h3>
+            <p>Always make a dramatic or simpler version. Growth hides in comparison, not perfection.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="status-bar">
+      <span id="offlineStatus">Checking connection…</span>
+      <span>Offline-ready after first load</span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

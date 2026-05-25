@@ -1,7 +1,8 @@
-const STORAGE_KEY = 'lineforge-studio-v1';
+const STORAGE_KEY = 'glyphforge-atelier-v1';
 
 const state = {
   activeTab: 'mission',
+  preferredFormat: 'mixed',
   mission: null,
   saved: [],
   checklist: {},
@@ -17,44 +18,141 @@ const state = {
   }
 };
 
+const skillBank = [
+  {
+    label: 'Silhouette clarity',
+    short: 'Make the outer shape readable first.',
+    what: 'Silhouette clarity means your drawing can be recognized from its outside shape before any details are added.',
+    why: 'Icons and mascots must read quickly. A strong silhouette survives when it is tiny, blurry, or seen from across the room.',
+    how: 'Draw three tiny filled-in thumbnails. Choose the one with the clearest outline. Add details only after the big shape works.',
+    drill: 'Black out your sketch like a shadow. If you cannot name it in two seconds, simplify the outline.',
+    mistakes: 'Tiny details, symmetrical stiffness, or an outline that looks like every other object.',
+    steps: ['Draw three postage-stamp silhouettes.', 'Choose the clearest outline.', 'Remove one detail that weakens the read.', 'Add one signature notch, handle, ear, spark, or curve.']
+  },
+  {
+    label: 'Shape language',
+    short: 'Use circles, squares, and triangles to control personality.',
+    what: 'Shape language is the emotional meaning of basic shapes: circles feel friendly, squares feel stable, triangles feel sharp or energetic.',
+    why: 'Mascots and icons need instant personality. Shape choices make the design feel intentional before color or expression arrives.',
+    how: 'Pick one dominant shape family, then repeat it in the body, details, and negative spaces. Use one contrasting shape for surprise.',
+    drill: 'Draw the same subject three times: round, blocky, and sharp. Label how each version feels.',
+    mistakes: 'Mixing every shape equally, which makes the character feel accidental instead of designed.',
+    steps: ['Choose a dominant shape family.', 'Repeat it in at least three places.', 'Use one contrast shape as the hook.', 'Compare the mood before adding details.']
+  },
+  {
+    label: 'Icon readability',
+    short: 'Design for tiny sizes and fast recognition.',
+    what: 'Icon readability is the skill of making a mark recognizable at small sizes, such as an app icon, sticker, button, or logo badge.',
+    why: 'A beautiful drawing can fail as an icon if it depends on tiny texture, thin lines, or complicated internal shapes.',
+    how: 'Use one bold base shape, one subject cue, and one memorable twist. Check it at thumbnail size before refining.',
+    drill: 'Shrink your design to 64px wide. Keep only what still reads.',
+    mistakes: 'Text inside the icon, too many colors, thin lines, and detail that disappears when scaled down.',
+    steps: ['Draw a clear container shape.', 'Place one large subject cue inside it.', 'Limit interior marks to two or three.', 'Squint or shrink-test the result.']
+  },
+  {
+    label: 'Mascot construction',
+    short: 'Build characters from simple body masses.',
+    what: 'Mascot construction means building a character from easy forms: head, body, limbs, facial focus, and accessory.',
+    why: 'A mascot needs repeatability. You should be able to redraw it from different angles without losing its identity.',
+    how: 'Start with a body bean or block, attach a clear head shape, then add one repeating motif such as ears, crest, glasses, scarf, or tail.',
+    drill: 'Create a mascot turnaround: front, side, and tiny icon head.',
+    mistakes: 'Starting with costume details before the body shape, or making the face too small to carry expression.',
+    steps: ['Block in head and body masses.', 'Place the face with a center line.', 'Add limbs as simple tubes or mittens.', 'Add one accessory that tells the story.']
+  },
+  {
+    label: 'Expression through pose',
+    short: 'Show emotion with tilt, squash, stretch, and gesture.',
+    what: 'Expression through pose means the whole design communicates emotion, not just the eyes or mouth.',
+    why: 'Icons and mascots often need to work without detailed faces. A tilted cup, leaning robot, or puffed-up cloud can feel alive.',
+    how: 'Draw a gesture line through the subject. Push the lean, squash, stretch, or asymmetry until the mood reads clearly.',
+    drill: 'Draw the same mascot happy, confused, brave, and sleepy using only body pose.',
+    mistakes: 'Relying only on eyebrows, or keeping the body perfectly upright when the emotion should affect it.',
+    steps: ['Draw the neutral version.', 'Add a gesture line.', 'Push the pose 30% further.', 'Check if the mood reads without facial details.']
+  },
+  {
+    label: 'Logo simplification',
+    short: 'Reduce an idea to a memorable mark.',
+    what: 'Logo simplification is turning a subject into a bold, repeatable symbol without losing the core idea.',
+    why: 'A logo must be easy to remember, easy to redraw, and strong in one color.',
+    how: 'Find the subject’s most famous feature. Merge smaller details into larger shapes. Test it in black and white.',
+    drill: 'Draw your subject using only five shapes. Then redraw it using only three.',
+    mistakes: 'Illustrating everything instead of choosing the one feature people remember.',
+    steps: ['Name the subject’s strongest feature.', 'Delete secondary details.', 'Merge shapes when possible.', 'Test the mark in one color.']
+  },
+  {
+    label: 'Value grouping',
+    short: 'Organize light and dark before color.',
+    what: 'Value grouping means arranging light, middle, and dark areas so the design reads even without color.',
+    why: 'Color is not enough. Good value structure keeps an icon legible and gives a mascot clear focus.',
+    how: 'Choose one main dark shape, one main light shape, and one accent. Keep the face or focal symbol highest contrast.',
+    drill: 'Make a three-value version of your drawing: light, mid, dark. No gradients.',
+    mistakes: 'Sprinkling tiny shadows everywhere, which creates noise instead of structure.',
+    steps: ['Separate light, middle, and dark zones.', 'Keep the focal point highest contrast.', 'Group tiny shadows into bigger shapes.', 'Check the design in grayscale.']
+  },
+  {
+    label: 'Color hierarchy',
+    short: 'Use color to guide attention, not decorate everything.',
+    what: 'Color hierarchy means assigning jobs to colors: base, shadow, highlight, emotion, and callout.',
+    why: 'Icons and mascots get messy when every part competes. A small palette makes the design more professional.',
+    how: 'Pick three colors: base, dark, accent. Use the accent only where you want the eye to land.',
+    drill: 'Color the same sketch with only three colors, then only two.',
+    mistakes: 'Using too many accents, equal saturation everywhere, or colors that have the same value.',
+    steps: ['Pick a base color.', 'Pick a darker support color.', 'Pick one accent color.', 'Use the accent on the most important 10%.']
+  },
+  {
+    label: 'Line weight',
+    short: 'Control thick and thin lines for focus and charm.',
+    what: 'Line weight is the thickness variation of your strokes.',
+    why: 'Thicker lines can make icons feel bold and readable. Lighter interior lines can keep mascots expressive without clutter.',
+    how: 'Use thicker outer lines and thinner interior detail. Let corners and overlaps get slightly heavier.',
+    drill: 'Trace one sketch three times: thin, chunky, and mixed. Choose the clearest version.',
+    mistakes: 'Making every line the same weight, or using hairline detail that disappears.',
+    steps: ['Use a bold outer contour.', 'Thin down interior lines.', 'Thicken overlaps and shadow edges.', 'Erase lines that do not explain form.']
+  },
+  {
+    label: 'Proportion exaggeration',
+    short: 'Change size relationships to create appeal.',
+    what: 'Proportion exaggeration means making some parts larger or smaller than reality to create clarity, cuteness, comedy, or power.',
+    why: 'Mascots become memorable when proportions are designed, not copied. Icons become clearer when important parts are oversized.',
+    how: 'Choose the most important part and enlarge it. Shrink supporting details so they do not compete.',
+    drill: 'Make three versions: giant head, giant hands, giant accessory. Pick the best story.',
+    mistakes: 'Even proportions everywhere, which can make the design feel generic.',
+    steps: ['Choose the story part.', 'Make it noticeably larger.', 'Shrink secondary parts.', 'Check balance and readability.']
+  },
+  {
+    label: 'Negative space',
+    short: 'Use empty space as part of the design.',
+    what: 'Negative space is the empty space inside or around a design that helps define the shape.',
+    why: 'Good negative space makes icons cleaner, logos smarter, and mascots easier to read.',
+    how: 'Look for holes, gaps, and cutouts that can become meaningful shapes without adding more lines.',
+    drill: 'Create one icon where the important detail is a cutout instead of a drawn line.',
+    mistakes: 'Filling every space, leaving tangents, or making tiny holes that disappear.',
+    steps: ['Find one useful cutout.', 'Make gaps wide enough to survive shrinking.', 'Avoid shapes barely touching.', 'Use empty space to simplify details.']
+  },
+  {
+    label: 'Gesture lines',
+    short: 'Use a simple action line to make designs feel alive.',
+    what: 'A gesture line is the invisible flow line through the subject.',
+    why: 'Even an object icon can feel more charming when its big shapes follow a clean rhythm.',
+    how: 'Draw one sweeping line through the design first. Place major masses along that line.',
+    drill: 'Draw a mascot in five poses using only a head, body, and one gesture line.',
+    mistakes: 'Stacking shapes stiffly or adding limbs with no clear flow.',
+    steps: ['Draw one action curve.', 'Attach the biggest masses to it.', 'Make details support the flow.', 'Redraw with fewer stiff angles.']
+  }
+];
+
 const banks = {
-  subjects: [
-    'a cup', 'a sleepy lamp', 'a tiny dragon', 'a running shoe', 'a houseplant',
-    'a nervous cloud', 'a moon-shaped chair', 'a heroic spoon', 'a shy robot',
-    'a fox mask', 'a teapot', 'a backpack', 'a whale balloon', 'a magical key',
-    'a mushroom cottage', 'a confused star', 'a paper airplane', 'a cozy ghost'
+  iconSubjects: [
+    'a cup badge', 'a moon app icon', 'a weather glyph', 'a tiny dragon badge', 'a houseplant icon',
+    'a fox mask logo', 'a teapot mark', 'a backpack sticker', 'a whale balloon icon', 'a magical key logo',
+    'a mushroom cottage badge', 'a paper airplane icon', 'a sleepy lamp symbol', 'a compass glyph',
+    'a cloud badge', 'a star-shaped button', 'a flame sticker', 'a crystal logo'
   ],
-  skills: [
-    {
-      label: 'Silhouette clarity',
-      tip: 'Make the outside shape recognizable before adding inside details.',
-      steps: ['Draw three tiny thumbnails first.', 'Choose the clearest outer shape.', 'Remove one detail that weakens the silhouette.']
-    },
-    {
-      label: 'Shape language',
-      tip: 'Choose circles, squares, or triangles to make the drawing feel intentional.',
-      steps: ['Pick one dominant shape family.', 'Repeat it in at least three places.', 'Use one contrasting shape as the twist.']
-    },
-    {
-      label: 'Expression through pose',
-      tip: 'Tilt, squash, stretch, or bend the subject to show emotion.',
-      steps: ['Draw the neutral version.', 'Push the pose 30% further.', 'Make the gesture readable without facial details.']
-    },
-    {
-      label: 'Simple perspective',
-      tip: 'Use a top ellipse, side planes, or overlap to give the object depth.',
-      steps: ['Mark the front, side, and top.', 'Keep parallel edges consistent.', 'Add one cast shadow to ground it.']
-    },
-    {
-      label: 'Logo simplification',
-      tip: 'Reduce the subject to a bold icon that still reads small.',
-      steps: ['Combine details into larger shapes.', 'Use no more than two interior marks.', 'Check the design at thumbnail size.']
-    },
-    {
-      label: 'Value grouping',
-      tip: 'Group lights and darks so the drawing reads before color does.',
-      steps: ['Separate light, middle, and dark zones.', 'Keep the focal point highest contrast.', 'Avoid sprinkling tiny shadows everywhere.']
-    }
+  mascotSubjects: [
+    'a nervous cloud mascot', 'a brave spoon mascot', 'a shy robot mascot', 'a cozy ghost mascot',
+    'a tiny dragon helper', 'a moon cat mascot', 'a mushroom shopkeeper', 'a backpack creature',
+    'a teapot mentor', 'a fox courier', 'a sleepy lamp friend', 'a whale balloon companion',
+    'a houseplant guardian', 'a star apprentice', 'a paper airplane scout', 'a little flame character'
   ],
   constraints: [
     'Use only 3 colors.',
@@ -66,31 +164,45 @@ const banks = {
     'Make every line slightly curved.',
     'Use one color plus shadows.',
     'Make it readable at postage-stamp size.',
-    'Draw it without erasing.'
+    'Draw it without erasing.',
+    'Use only one shape family plus one contrast shape.',
+    'Create a black-and-white version first.'
   ],
   moods: [
     'hopeful', 'confused', 'dramatic', 'gentle', 'mischievous', 'ancient',
-    'brave', 'lonely', 'sparkly', 'awkward', 'peaceful', 'overexcited'
+    'brave', 'lonely', 'sparkly', 'awkward', 'peaceful', 'overexcited',
+    'curious', 'protective', 'dreamy', 'tiny-but-mighty'
   ],
-  upgrades: [
-    'Turn it into a sticker.',
-    'Turn it into a clean logo.',
-    'Draw a dramatic version too.',
-    'Make a tiny mascot version.',
-    'Make a pattern tile from it.',
-    'Redraw it as a book cover icon.',
-    'Create a before/after version.',
-    'Simplify it until it works as an app icon.'
+  archetypes: [
+    'helper', 'guardian', 'scout', 'maker', 'messenger', 'teacher',
+    'trickster', 'navigator', 'collector', 'tiny hero'
+  ],
+  iconUpgrades: [
+    'Turn it into an app icon.',
+    'Turn it into a clean one-color logo.',
+    'Create a rounded-square icon version.',
+    'Make a sticker version with one bold outline.',
+    'Simplify it until it works at 64px.',
+    'Create a badge with a clear container shape.'
+  ],
+  mascotUpgrades: [
+    'Create a mascot head icon.',
+    'Draw a front-view full body version.',
+    'Make three expression stickers.',
+    'Create a tiny sidekick version.',
+    'Design one accessory that explains its job.',
+    'Turn it into a logo mascot badge.'
   ]
 };
 
 const critiqueItems = [
-  'The subject is recognizable in 2 seconds.',
-  'The assigned mood is visible without explaining it.',
-  'The constraint is clearly followed.',
-  'The biggest shapes were drawn before the details.',
-  'There is a second version that improves one choice.',
-  'The final version would still read if shrunk down.'
+  'The design is recognizable in 2 seconds.',
+  'The silhouette works before details are added.',
+  'The assigned skill is visible in the drawing.',
+  'The icon or mascot still reads when shrunk down.',
+  'The mood or personality is visible through shape or pose.',
+  'The palette is controlled and not noisy.',
+  'There is a second version that improves one design choice.'
 ];
 
 const $ = selector => document.querySelector(selector);
@@ -106,26 +218,32 @@ function pick(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+function getSkill(label) {
+  return skillBank.find(skill => skill.label === label) || skillBank[0];
+}
+
 function createMission() {
-  const subject = pick(banks.subjects);
-  const skill = pick(banks.skills);
+  const format = state.preferredFormat === 'mixed' ? pick(['icon', 'mascot']) : state.preferredFormat;
+  const subject = format === 'icon' ? pick(banks.iconSubjects) : pick(banks.mascotSubjects);
+  const skill = pick(skillBank);
   const constraint = pick(banks.constraints);
   const mood = pick(banks.moods);
-  const upgrade = pick(banks.upgrades);
+  const archetype = pick(banks.archetypes);
+  const upgrade = format === 'icon' ? pick(banks.iconUpgrades) : pick(banks.mascotUpgrades);
   const seed = Math.random().toString(36).slice(2, 7).toUpperCase();
-
-  const construction = buildConstructionTip(subject, mood, skill.label);
+  const construction = buildConstructionTip(subject, mood, skill.label, format, archetype);
 
   state.mission = {
     id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${seed}`,
     seed,
     createdAt: new Date().toISOString(),
+    format,
     subject,
     skill: skill.label,
-    skillTip: skill.tip,
-    skillSteps: skill.steps,
+    skillShort: skill.short,
     constraint,
     mood,
+    archetype,
     upgrade,
     construction
   };
@@ -134,25 +252,29 @@ function createMission() {
   saveState();
   render();
   drawGuideForMission();
-  showToast('New drawing mission forged.');
+  showToast(format === 'icon' ? 'New icon mission forged.' : 'New mascot mission forged.');
 }
 
-function buildConstructionTip(subject, mood, skill) {
+function buildConstructionTip(subject, mood, skill, format, archetype) {
   const subjectWord = subject.replace(/^a |^an /, '');
-  const shape = mood.includes('dramatic') || mood.includes('confused') ? 'triangles and tilted lines'
-    : mood.includes('hopeful') || mood.includes('gentle') || mood.includes('peaceful') ? 'circles and soft arcs'
-    : mood.includes('brave') || mood.includes('ancient') ? 'squares and heavy blocks'
+  const shape = mood.includes('dramatic') || mood.includes('confused') || mood.includes('mischievous') ? 'triangles, tilted lines, and asymmetry'
+    : mood.includes('hopeful') || mood.includes('gentle') || mood.includes('peaceful') || mood.includes('dreamy') ? 'circles and soft arcs'
+    : mood.includes('brave') || mood.includes('ancient') || mood.includes('protective') ? 'squares, shields, and heavy blocks'
     : 'one large simple shape';
-  return `Start with ${shape}. Make the ${subjectWord} readable as a silhouette, then add one small detail that proves the mood is ${mood}.`;
+  if (format === 'icon') {
+    return `Start with ${shape}. Make the ${subjectWord} readable inside a strong container, then add one clear detail that proves the mood is ${mood}.`;
+  }
+  return `Start with ${shape}. Build the ${subjectWord} as a ${archetype}: big readable head/body masses first, then one accessory or pose detail that proves the mood is ${mood}.`;
 }
 
 function missionCards() {
   const m = state.mission;
   const rows = [
+    ['Format', m.format === 'icon' ? 'Build an icon / logo mark.' : 'Build a character mascot.', 'format'],
     ['Start', `Draw ${m.subject}.`, 'start'],
-    ['Skill', m.skill, 'skill'],
+    ['Skill', `${m.skill}: ${getSkill(m.skill).short}`, 'skill'],
     ['Constraint', m.constraint, 'constraint'],
-    ['Feel', `Make it feel ${m.mood}.`, 'feel'],
+    ['Personality', `Make it feel ${m.mood}. Role: ${m.archetype}.`, 'feel'],
     ['Build', m.construction, 'build'],
     ['Evolve', m.upgrade, 'evolve']
   ];
@@ -168,16 +290,40 @@ function missionCards() {
 function renderMission() {
   if (!state.mission) createMission();
 
-  $('#missionSeed').textContent = `Seed: ${state.mission.seed}`;
+  const m = state.mission;
+  const skill = getSkill(m.skill);
+
+  $('#missionSeed').textContent = `Seed: ${m.seed}`;
   $('#missionCards').innerHTML = missionCards();
 
+  $('#skillTitle').textContent = `${skill.label}: what you are practicing`;
+  $('#skillExplain').innerHTML = `
+    <article class="explain-card"><strong>What it means</strong><p>${escapeHTML(skill.what)}</p></article>
+    <article class="explain-card"><strong>Why it matters</strong><p>${escapeHTML(skill.why)}</p></article>
+    <article class="explain-card"><strong>How to practice it</strong><p>${escapeHTML(skill.how)}</p></article>
+    <article class="explain-card"><strong>Common trap</strong><p>${escapeHTML(skill.mistakes)}</p></article>
+  `;
+
+  const formatSteps = m.format === 'icon'
+    ? [
+      'Choose a container: circle, squircle, badge, diamond, or shield.',
+      'Place the largest subject cue first. Do not start with texture.',
+      'Shrink-test the icon by stepping back or pinching the canvas view smaller.'
+    ]
+    : [
+      'Block in a head and body shape that match the personality.',
+      'Add a pose line: leaning, bouncing, drooping, or standing strong.',
+      'Give the mascot one signature accessory, mark, ear, tail, or prop.'
+    ];
+
   const steps = [
-    `Warm up with three tiny versions of ${state.mission.subject}. Do not chase details yet.`,
-    state.mission.construction,
-    state.mission.skillTip,
-    ...state.mission.skillSteps,
-    `Finish by applying this constraint: ${state.mission.constraint}`,
-    `Repeat once: ${state.mission.upgrade}`
+    `Warm up with three tiny versions of ${m.subject}. Each one should take less than 30 seconds.`,
+    m.construction,
+    ...formatSteps,
+    `Skill drill: ${skill.drill}`,
+    ...skill.steps,
+    `Finish by applying this constraint: ${m.constraint}`,
+    `Repeat once: ${m.upgrade}`
   ];
 
   $('#lessonSteps').innerHTML = steps.map(step => `<li>${escapeHTML(step)}</li>`).join('');
@@ -188,6 +334,10 @@ function renderMission() {
       <span>${escapeHTML(item)}</span>
     </label>
   `).join('');
+
+  $('#deskBrief').textContent = m.format === 'icon' ? `Icon: ${m.subject}` : `Mascot: ${m.subject}`;
+  $('#deskTip').textContent = `${m.skill}: ${skill.how}`;
+  $$('.mode-chip').forEach(button => button.classList.toggle('is-active', button.dataset.format === state.preferredFormat));
 }
 
 function renderTabs() {
@@ -201,7 +351,7 @@ function renderTabs() {
     panel.hidden = panel.dataset.panel !== state.activeTab;
   });
 
-  if (state.activeTab === 'studio') {
+  if (state.activeTab === 'forge') {
     requestAnimationFrame(initCanvas);
   }
 }
@@ -215,11 +365,11 @@ function renderLibrary() {
 
   list.innerHTML = state.saved.map(item => `
     <article class="saved-card">
-      <p class="eyebrow">${escapeHTML(new Date(item.createdAt).toLocaleDateString())}</p>
+      <p class="eyebrow">${escapeHTML(new Date(item.createdAt).toLocaleDateString())} • ${escapeHTML(item.format || 'mission')}</p>
       <h3>Draw ${escapeHTML(item.subject)}</h3>
       <p><strong>Skill:</strong> ${escapeHTML(item.skill)}<br>
       <strong>Constraint:</strong> ${escapeHTML(item.constraint)}<br>
-      <strong>Feel:</strong> ${escapeHTML(item.mood)}<br>
+      <strong>Personality:</strong> ${escapeHTML(item.mood)} ${item.archetype ? `• ${escapeHTML(item.archetype)}` : ''}<br>
       <strong>Upgrade:</strong> ${escapeHTML(item.upgrade)}</p>
       <footer>
         <button class="mini-button" data-action="load-saved" data-id="${escapeHTML(item.id)}">Load</button>
@@ -229,15 +379,31 @@ function renderLibrary() {
   `).join('');
 }
 
+function renderCodex() {
+  const grid = $('#codexGrid');
+  grid.innerHTML = skillBank.map(skill => `
+    <article class="codex-card">
+      <p class="eyebrow">${escapeHTML(skill.label)}</p>
+      <h3>${escapeHTML(skill.short)}</h3>
+      <p><strong>Meaning:</strong> ${escapeHTML(skill.what)}</p>
+      <p><strong>Use it for:</strong> ${escapeHTML(skill.why)}</p>
+      <p><strong>Practice:</strong> ${escapeHTML(skill.drill)}</p>
+      <button class="mini-button" data-action="practice-skill" data-skill="${escapeHTML(skill.label)}">Practice this skill</button>
+    </article>
+  `).join('');
+}
+
 function render() {
   renderTabs();
   renderMission();
   renderLibrary();
+  renderCodex();
   updateOnlineStatus();
 }
 
 function saveState() {
   const payload = {
+    preferredFormat: state.preferredFormat,
     mission: state.mission,
     saved: state.saved,
     checklist: state.checklist
@@ -250,6 +416,7 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const data = JSON.parse(raw);
+    state.preferredFormat = ['mixed', 'icon', 'mascot'].includes(data.preferredFormat) ? data.preferredFormat : 'mixed';
     state.mission = data.mission || null;
     state.saved = Array.isArray(data.saved) ? data.saved : [];
     state.checklist = data.checklist && typeof data.checklist === 'object' ? data.checklist : {};
@@ -267,13 +434,18 @@ function showToast(message) {
 }
 
 function missionText(m = state.mission) {
+  const skill = getSkill(m.skill);
   return [
-    `LineForge Mission ${m.seed}`,
+    `GlyphForge Mission ${m.seed}`,
+    `Format: ${m.format === 'icon' ? 'Icon / logo mark' : 'Character mascot'}`,
     `Draw ${m.subject}.`,
     `Skill: ${m.skill}`,
+    `Skill meaning: ${skill.what}`,
+    `Why it matters: ${skill.why}`,
     `Constraint: ${m.constraint}`,
-    `Feel: Make it ${m.mood}.`,
+    `Personality: Make it ${m.mood}. Role: ${m.archetype}.`,
     `Build: ${m.construction}`,
+    `Drill: ${skill.drill}`,
     `Evolve: ${m.upgrade}`
   ].join('\n');
 }
@@ -291,12 +463,47 @@ function bindEvents() {
     if (!actionEl) return;
     const action = actionEl.dataset.action;
 
+    if (action === 'set-format') {
+      state.preferredFormat = actionEl.dataset.format;
+      saveState();
+      createMission();
+    }
+
+    if (action === 'practice-skill') {
+      const skill = getSkill(actionEl.dataset.skill);
+      const format = state.preferredFormat === 'mixed' ? pick(['icon', 'mascot']) : state.preferredFormat;
+      const subject = format === 'icon' ? pick(banks.iconSubjects) : pick(banks.mascotSubjects);
+      const mood = pick(banks.moods);
+      const archetype = pick(banks.archetypes);
+      const seed = Math.random().toString(36).slice(2, 7).toUpperCase();
+      state.mission = {
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${seed}`,
+        seed,
+        createdAt: new Date().toISOString(),
+        format,
+        subject,
+        skill: skill.label,
+        skillShort: skill.short,
+        constraint: pick(banks.constraints),
+        mood,
+        archetype,
+        upgrade: format === 'icon' ? pick(banks.iconUpgrades) : pick(banks.mascotUpgrades),
+        construction: buildConstructionTip(subject, mood, skill.label, format, archetype)
+      };
+      state.checklist = {};
+      state.activeTab = 'mission';
+      saveState();
+      render();
+      drawGuideForMission();
+      showToast(`${skill.label} mission loaded.`);
+    }
+
     if (action === 'new-mission') createMission();
 
     if (action === 'save-mission') {
       if (!state.saved.some(item => item.id === state.mission.id)) {
         state.saved.unshift({ ...state.mission });
-        state.saved = state.saved.slice(0, 60);
+        state.saved = state.saved.slice(0, 80);
         saveState();
         renderLibrary();
         showToast('Mission saved to your practice archive.');
@@ -385,7 +592,7 @@ async function shareMission() {
   const text = missionText();
   try {
     if (navigator.share) {
-      await navigator.share({ title: 'LineForge drawing mission', text });
+      await navigator.share({ title: 'GlyphForge drawing mission', text });
       return;
     }
     await navigator.clipboard.writeText(text);
@@ -402,14 +609,14 @@ function speakLesson() {
   }
   const text = missionText().replace(/\n/g, '. ');
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.92;
+  utterance.rate = 0.9;
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
 }
 
 function exportLibrary() {
   const blob = new Blob([JSON.stringify({ saved: state.saved }, null, 2)], { type: 'application/json' });
-  downloadBlob(blob, `lineforge-library-${new Date().toISOString().slice(0,10)}.json`);
+  downloadBlob(blob, `glyphforge-library-${new Date().toISOString().slice(0,10)}.json`);
   showToast('Library JSON exported.');
 }
 
@@ -563,7 +770,7 @@ function exportPNG() {
       showToast('Export failed.');
       return;
     }
-    downloadBlob(blob, `lineforge-sketch-${Date.now()}.png`);
+    downloadBlob(blob, `glyphforge-sketch-${Date.now()}.png`);
     showToast('Sketch exported as PNG.');
   }, 'image/png');
 }
@@ -581,48 +788,67 @@ function downloadBlob(blob, filename) {
 function drawGuideForMission() {
   const overlay = $('#guideOverlay');
   if (!overlay || !state.mission) return;
-  const s = state.mission.subject.toLowerCase();
+  const m = state.mission;
+  const s = m.subject.toLowerCase();
   let svg = '';
 
-  if (s.includes('cup') || s.includes('teapot')) {
-    svg = `
-      <ellipse cx="50" cy="28" rx="19" ry="8"></ellipse>
-      <path d="M31 29 C34 62 38 73 50 74 C62 73 66 62 69 29"></path>
-      <ellipse cx="50" cy="73" rx="12" ry="5"></ellipse>
-      <path d="M69 40 C88 39 88 62 69 61"></path>
-      <line x1="26" y1="83" x2="74" y2="83"></line>`;
-  } else if (s.includes('dragon') || s.includes('fox') || s.includes('ghost')) {
-    svg = `
-      <circle cx="50" cy="38" r="18"></circle>
-      <path d="M35 31 L25 17 L43 25"></path>
-      <path d="M65 31 L75 17 L57 25"></path>
-      <path d="M34 55 C38 78 62 78 66 55"></path>
-      <line x1="41" y1="40" x2="45" y2="40"></line>
-      <line x1="55" y1="40" x2="59" y2="40"></line>`;
-  } else if (s.includes('shoe') || s.includes('airplane') || s.includes('key')) {
-    svg = `
-      <path d="M20 58 C38 42 56 36 77 47 C82 50 82 61 74 64 L23 66 C18 65 16 62 20 58z"></path>
-      <line x1="34" y1="53" x2="45" y2="46"></line>
-      <line x1="45" y1="51" x2="56" y2="44"></line>`;
-  } else if (s.includes('plant') || s.includes('mushroom') || s.includes('cloud')) {
-    svg = `
-      <path d="M50 76 C49 56 49 44 50 29"></path>
-      <ellipse cx="37" cy="42" rx="15" ry="8" transform="rotate(-32 37 42)"></ellipse>
-      <ellipse cx="62" cy="39" rx="16" ry="8" transform="rotate(28 62 39)"></ellipse>
-      <rect x="34" y="70" width="32" height="14" rx="4"></rect>`;
-  } else if (s.includes('robot') || s.includes('lamp') || s.includes('chair') || s.includes('backpack')) {
-    svg = `
-      <rect x="34" y="24" width="32" height="30" rx="7"></rect>
-      <rect x="28" y="57" width="44" height="22" rx="8"></rect>
-      <line x1="42" y1="34" x2="42" y2="34"></line>
-      <line x1="58" y1="34" x2="58" y2="34"></line>
-      <line x1="40" y1="84" x2="60" y2="84"></line>`;
+  if (m.format === 'icon') {
+    if (s.includes('cup') || s.includes('teapot')) {
+      svg = `
+        <rect x="18" y="14" width="64" height="64" rx="18"></rect>
+        <ellipse cx="48" cy="35" rx="17" ry="7"></ellipse>
+        <path d="M31 36 C34 61 38 68 49 69 C61 68 65 61 68 36"></path>
+        <path d="M68 45 C82 45 82 60 68 60"></path>`;
+    } else if (s.includes('moon') || s.includes('star') || s.includes('weather') || s.includes('cloud')) {
+      svg = `
+        <circle cx="50" cy="50" r="34"></circle>
+        <path d="M58 26 C45 32 42 49 52 61 C42 59 34 50 34 40 C34 30 43 23 58 26z"></path>
+        <path d="M31 63 C36 56 45 57 49 63 C54 58 65 59 69 66"></path>`;
+    } else if (s.includes('fox') || s.includes('dragon')) {
+      svg = `
+        <rect x="18" y="16" width="64" height="64" rx="18"></rect>
+        <path d="M30 40 L40 23 L50 38 L60 23 L70 40"></path>
+        <path d="M31 43 C36 69 64 69 69 43"></path>
+        <line x1="41" y1="50" x2="45" y2="50"></line>
+        <line x1="55" y1="50" x2="59" y2="50"></line>`;
+    } else {
+      svg = `
+        <rect x="17" y="17" width="66" height="66" rx="20"></rect>
+        <circle cx="50" cy="47" r="20"></circle>
+        <rect x="36" y="61" width="28" height="13" rx="5"></rect>
+        <line x1="50" y1="22" x2="50" y2="78"></line>
+        <line x1="24" y1="50" x2="76" y2="50"></line>`;
+    }
   } else {
-    svg = `
-      <circle cx="50" cy="42" r="20"></circle>
-      <rect x="35" y="57" width="30" height="20" rx="6"></rect>
-      <line x1="25" y1="82" x2="75" y2="82"></line>
-      <line x1="50" y1="16" x2="50" y2="88"></line>`;
+    if (s.includes('robot') || s.includes('lamp')) {
+      svg = `
+        <rect x="34" y="20" width="32" height="28" rx="8"></rect>
+        <rect x="29" y="52" width="42" height="24" rx="10"></rect>
+        <line x1="42" y1="33" x2="42" y2="33"></line>
+        <line x1="58" y1="33" x2="58" y2="33"></line>
+        <path d="M38 77 L32 88 M62 77 L68 88"></path>`;
+    } else if (s.includes('dragon') || s.includes('fox') || s.includes('cat')) {
+      svg = `
+        <circle cx="50" cy="35" r="18"></circle>
+        <path d="M35 29 L25 13 L43 24"></path>
+        <path d="M65 29 L75 13 L57 24"></path>
+        <path d="M35 55 C39 82 61 82 65 55"></path>
+        <path d="M37 66 C25 68 22 80 33 83"></path>
+        <path d="M63 66 C75 68 78 80 67 83"></path>`;
+    } else if (s.includes('ghost') || s.includes('cloud') || s.includes('flame')) {
+      svg = `
+        <path d="M33 57 C23 42 32 24 50 24 C68 24 77 42 67 57 L67 78 L58 72 L50 80 L42 72 L33 78z"></path>
+        <line x1="42" y1="45" x2="44" y2="45"></line>
+        <line x1="56" y1="45" x2="58" y2="45"></line>
+        <path d="M43 56 C47 60 53 60 57 56"></path>`;
+    } else {
+      svg = `
+        <circle cx="50" cy="34" r="18"></circle>
+        <path d="M36 54 C38 79 62 79 64 54"></path>
+        <line x1="50" y1="16" x2="50" y2="86"></line>
+        <path d="M34 65 C24 68 23 80 32 84"></path>
+        <path d="M66 65 C76 68 77 80 68 84"></path>`;
+    }
   }
 
   overlay.innerHTML = svg;
@@ -643,14 +869,15 @@ if (!state.mission) {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
     seed: 'WARM1',
     createdAt: new Date().toISOString(),
-    subject: 'a cup',
+    format: 'mascot',
+    subject: 'a confused cup mascot',
     skill: 'Shape language',
-    skillTip: 'Choose circles, squares, or triangles to make the drawing feel intentional.',
-    skillSteps: ['Pick one dominant shape family.', 'Repeat it in at least three places.', 'Use one contrasting shape as the twist.'],
+    skillShort: 'Use circles, squares, and triangles to control personality.',
     constraint: 'Use only 3 colors.',
     mood: 'confused',
-    upgrade: 'Draw a dramatic version too.',
-    construction: 'Start with a tilted oval and a lopsided handle. Keep the cup readable, then add one small detail that proves the mood is confused.'
+    archetype: 'helper',
+    upgrade: 'Create a mascot head icon.',
+    construction: 'Start with triangles, tilted lines, and asymmetry. Build the confused cup mascot as a helper: big readable head/body masses first, then one accessory or pose detail that proves the mood is confused.'
   };
 }
 bindEvents();

@@ -1,4 +1,4 @@
-/* LineForge Studio — one-page PWA drawing teacher */
+/* GlyphForge Atelier — one-page PWA drawing teacher */
 :root {
   color-scheme: dark;
   --bg: #241d2a;
@@ -418,7 +418,7 @@ h3 {
   accent-color: var(--gold);
 }
 
-.studio-layout {
+.forge-layout {
   display: grid;
   gap: var(--space-4);
 }
@@ -661,25 +661,27 @@ select {
     grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
   }
 
-  .studio-panel,
+  .forge-panel,
   .library-panel,
-  .learn-panel {
+  .codex-panel {
     grid-column: 1 / -1;
   }
 
-  .studio-layout {
+  .forge-layout {
     grid-template-columns: minmax(0, 1fr) 280px;
   }
 
   .lesson-grid,
-  .library-list {
+  .library-list,
+  .codex-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1120px) {
   .lesson-grid,
-  .library-list {
+  .library-list,
+  .codex-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -728,5 +730,113 @@ select {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+
+/* GlyphForge Atelier additions */
+.brand-mark .mark-line {
+  fill: none;
+  stroke: #c9965d;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+
+.mode-chip {
+  color: var(--text);
+  background: rgba(247, 236, 222, 0.06);
+  border: 1px solid var(--line);
+  padding: 0.8rem 1rem;
+  font-weight: 850;
+}
+
+.mode-chip.is-active {
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--lavender), var(--gold));
+}
+
+.skill-explain {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.explain-card,
+.tool-card,
+.codex-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: rgba(247,236,222,0.065);
+  border: 1px solid var(--line);
+}
+
+.explain-card strong,
+.codex-card strong {
+  color: var(--gold);
+}
+
+.explain-card p,
+.codex-card p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 0;
+}
+
+.codex-grid {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.codex-card {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.codex-card h3 {
+  color: var(--gold);
+  margin-bottom: 0;
+}
+
+.codex-card .mini-button {
+  justify-self: start;
+  margin-top: var(--space-2);
+}
+
+.foundation-grid {
+  margin-top: var(--space-5);
+}
+
+.forge-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 860px) {
+  .forge-layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+
+  .skill-explain {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .forge-panel,
+  .library-panel,
+  .codex-panel {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1120px) {
+  .codex-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

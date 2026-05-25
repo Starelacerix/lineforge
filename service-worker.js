@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lineforge-studio-v1';
+const CACHE_NAME = 'glyphforge-atelier-v2';
 const APP_SHELL = [
   './',
   './index.html',

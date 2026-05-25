@@ -1,17 +1,18 @@
 {
-  "name": "LineForge Studio",
-  "short_name": "LineForge",
-  "description": "A Pencil-friendly drawing practice PWA with creative missions, step-by-step coaching, critique checklists, and an offline sketch desk.",
+  "name": "GlyphForge Atelier",
+  "short_name": "GlyphForge",
+  "description": "An offline-friendly drawing teacher PWA for building icons, logo marks, and character mascots with skill explanations and a Pencil-friendly forge desk.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#241d2a",
-  "theme_color": "#2a2032",
+  "background_color": "#211929",
+  "theme_color": "#211929",
   "categories": [
     "education",
     "productivity",
-    "graphics"
+    "graphics",
+    "design"
   ],
   "icons": [
     {

@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#2a2032" />
-  <meta name="description" content="LineForge Studio is an offline-friendly drawing practice PWA with creative missions, step-by-step coaching, critique checklists, and a Pencil-friendly canvas." />
+  <meta name="theme-color" content="#211929" />
+  <meta name="description" content="GlyphForge Atelier is an offline-friendly PWA that teaches drawing through icon and character mascot missions, skill explanations, critique checklists, and a Pencil-friendly forge desk." />
 
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="LineForge" />
+  <meta name="apple-mobile-web-app-title" content="GlyphForge" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon-192.png" />
   <link rel="stylesheet" href="style.css" />
 
-  <title>LineForge Studio</title>
+  <title>GlyphForge Atelier</title>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -30,12 +30,13 @@
           <svg viewBox="0 0 64 64" role="img">
             <rect x="8" y="8" width="48" height="48" rx="15"></rect>
             <path d="M19 43c7-19 17-25 26-22-3 5-7 10-12 15l10-1c-5 6-12 9-24 8z"></path>
-            <circle cx="42" cy="18" r="3"></circle>
+            <circle cx="43" cy="18" r="3"></circle>
+            <path d="M18 18h11M18 25h7" class="mark-line"></path>
           </svg>
         </div>
         <div>
-          <p class="eyebrow">Pencil-friendly drawing teacher</p>
-          <h1>LineForge Studio</h1>
+          <p class="eyebrow">Icon + mascot drawing teacher</p>
+          <h1>GlyphForge Atelier</h1>
         </div>
       </div>
 
@@ -50,17 +51,17 @@
         <span>01</span>
         Mission
       </button>
-      <button class="tab" data-tab="studio">
+      <button class="tab" data-tab="forge">
         <span>02</span>
-        Studio
+        Forge Desk
       </button>
       <button class="tab" data-tab="library">
         <span>03</span>
         Library
       </button>
-      <button class="tab" data-tab="learn">
+      <button class="tab" data-tab="codex">
         <span>04</span>
-        Learn
+        Skill Codex
       </button>
     </nav>
 
@@ -69,9 +70,15 @@
         <div class="panel-title-row">
           <div>
             <p class="eyebrow">Today’s brief</p>
-            <h2>Generate a teachable drawing challenge.</h2>
+            <h2>Build an icon or character mascot with a teachable path.</h2>
           </div>
           <div class="pill" id="missionSeed">Seed: warmup</div>
+        </div>
+
+        <div class="mode-row" aria-label="Mission type">
+          <button class="mode-chip is-active" data-action="set-format" data-format="mixed">Surprise me</button>
+          <button class="mode-chip" data-action="set-format" data-format="icon">Icon builder</button>
+          <button class="mode-chip" data-action="set-format" data-format="mascot">Mascot builder</button>
         </div>
 
         <div id="missionCards" class="mission-cards" aria-live="polite"></div>
@@ -85,15 +92,18 @@
       </section>
 
       <section class="panel coach-panel" data-panel="mission">
-        <p class="eyebrow">Coach path</p>
-        <h2>How to draw it</h2>
+        <p class="eyebrow">Teacher path</p>
+        <h2 id="skillTitle">Skill explained</h2>
+        <div id="skillExplain" class="skill-explain"></div>
+
+        <h3>How to draw this mission</h3>
         <ol id="lessonSteps" class="lesson-steps"></ol>
 
         <div class="critique-card">
           <div class="panel-title-row">
             <div>
               <p class="eyebrow">After drawing</p>
-              <h3>Critique checklist</h3>
+              <h3>Icon + mascot critique checklist</h3>
             </div>
             <button class="mini-button" data-action="reset-checklist">Reset</button>
           </div>
@@ -101,22 +111,28 @@
         </div>
       </section>
 
-      <section class="panel studio-panel" data-panel="studio" hidden>
+      <section class="panel forge-panel" data-panel="forge" hidden>
         <div class="panel-title-row">
           <div>
-            <p class="eyebrow">Practice desk</p>
-            <h2>Sketch with finger, Pencil, or trackpad.</h2>
+            <p class="eyebrow">Forge desk</p>
+            <h2>Sketch, trace, simplify, export.</h2>
           </div>
           <div class="pill" id="canvasStatus">Ready</div>
         </div>
 
-        <div class="studio-layout">
-          <div class="canvas-wrap">
+        <div class="forge-layout">
+          <div class="canvas-wrap show-guide">
             <canvas id="drawingCanvas" class="drawing-surface" aria-label="Drawing canvas"></canvas>
             <svg id="guideOverlay" class="guide-overlay" viewBox="0 0 100 100" aria-hidden="true"></svg>
           </div>
 
           <aside class="toolbox" aria-label="Drawing tools">
+            <div class="tool-card">
+              <p class="eyebrow">Current build</p>
+              <h3 id="deskBrief">Mission guide</h3>
+              <p id="deskTip" class="help-note">Turn on Guide, rough the largest shape first, then hide it and redraw cleaner.</p>
+            </div>
+
             <label>
               Brush
               <input id="brushSize" type="range" min="2" max="30" value="8" />
@@ -127,6 +143,7 @@
                 <option value="#f7ecde">Cream</option>
                 <option value="#c9965d">Gold</option>
                 <option value="#b69acb">Lavender</option>
+                <option value="#e7a7a0">Rose</option>
                 <option value="#302635">Plum</option>
               </select>
             </label>
@@ -137,7 +154,6 @@
               <button class="ghost-button" data-action="clear-canvas">Clear</button>
               <button class="primary-button wide" data-action="export-png">Export PNG</button>
             </div>
-            <p class="help-note">Tip: turn on Guide, rough the big shapes first, then hide it and redraw cleaner.</p>
           </aside>
         </div>
       </section>
@@ -146,46 +162,39 @@
         <div class="panel-title-row">
           <div>
             <p class="eyebrow">Practice archive</p>
-            <h2>Your saved missions</h2>
+            <h2>Your saved icon and mascot missions</h2>
           </div>
           <button class="ghost-button" data-action="export-library">Export JSON</button>
         </div>
         <div id="libraryList" class="library-list"></div>
       </section>
 
-      <section class="panel learn-panel" data-panel="learn" hidden>
-        <p class="eyebrow">Mini lessons</p>
-        <h2>Shape language cheatsheet</h2>
-        <div class="lesson-grid">
+      <section class="panel codex-panel" data-panel="codex" hidden>
+        <div class="panel-title-row">
+          <div>
+            <p class="eyebrow">Skill codex</p>
+            <h2>Every skill explained like a drawing teacher.</h2>
+          </div>
+          <div class="pill">Tap a card, then practice it</div>
+        </div>
+
+        <div id="codexGrid" class="codex-grid"></div>
+
+        <div class="lesson-grid foundation-grid">
           <article class="lesson-card">
             <span class="shape-dot circle"></span>
             <h3>Circles</h3>
-            <p>Use circles and curves for friendly, soft, cute, safe, squishy, or hopeful drawings.</p>
+            <p>Friendly, soft, cute, safe, squishy, hopeful. Great for mascots, cheeks, paws, rounded icons, and gentle silhouettes.</p>
           </article>
           <article class="lesson-card">
             <span class="shape-dot square"></span>
             <h3>Squares</h3>
-            <p>Use squares and rectangles for stable, heavy, reliable, awkward, practical, or grounded drawings.</p>
+            <p>Stable, heavy, reliable, practical, awkward, grounded. Great for badges, robots, packs, buildings, chunky mascot bodies.</p>
           </article>
           <article class="lesson-card">
             <span class="shape-dot triangle"></span>
             <h3>Triangles</h3>
-            <p>Use triangles and sharp diagonals for danger, energy, drama, speed, confusion, or tension.</p>
-          </article>
-          <article class="lesson-card">
-            <span class="shape-dot line"></span>
-            <h3>Silhouette</h3>
-            <p>Squint at your drawing. If the outer shape reads clearly, the design is already stronger.</p>
-          </article>
-          <article class="lesson-card">
-            <span class="shape-dot stamp"></span>
-            <h3>Logo mode</h3>
-            <p>Remove details until the idea works as a tiny mark. Keep one bold shape and one memorable twist.</p>
-          </article>
-          <article class="lesson-card">
-            <span class="shape-dot sparkle"></span>
-            <h3>Second pass</h3>
-            <p>Always make a dramatic or simpler version. Growth hides in comparison, not perfection.</p>
+            <p>Fast, sharp, tense, energetic, dramatic, mischievous. Great for ears, horns, lightning, motion, villain energy, and alert icons.</p>
           </article>
         </div>
       </section>
@@ -193,7 +202,7 @@
 
     <footer class="status-bar">
       <span id="offlineStatus">Checking connection…</span>
-      <span>Offline-ready after first load</span>
+      <span>Root icons • Offline-ready after first load</span>
     </footer>
   </div>
 
